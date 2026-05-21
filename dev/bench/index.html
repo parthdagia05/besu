@@ -1,285 +1,704 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes" />
-    <style>
-      html {
-        font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
-        -webkit-font-smoothing: antialiased;
-        background-color: #fff;
-        font-size: 16px;
-      }
-      body {
-        color: #4a4a4a;
-        margin: 8px;
-        font-size: 1em;
-        font-weight: 400;
-      }
-      header {
-        margin-bottom: 8px;
-        display: flex;
-        flex-direction: column;
-      }
-      main {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-      a {
-        color: #3273dc;
-        cursor: pointer;
-        text-decoration: none;
-      }
-      a:hover {
-        color: #000;
-      }
-      button {
-        color: #fff;
-        background-color: #3298dc;
-        border-color: transparent;
-        cursor: pointer;
-        text-align: center;
-      }
-      button:hover {
-        background-color: #2793da;
-        flex: none;
-      }
-      .spacer {
-        flex: auto;
-      }
-      .small {
-        font-size: 0.75rem;
-      }
-      footer {
-        margin-top: 16px;
-        display: flex;
-        align-items: center;
-      }
-      .header-label {
-        margin-right: 4px;
-      }
-      .benchmark-set {
-        margin: 8px 0;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-      .benchmark-title {
-        font-size: 3rem;
-        font-weight: 600;
-        word-break: break-word;
-        text-align: center;
-      }
-      .benchmark-graphs {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-        flex-wrap: wrap;
-        width: 100%;
-      }
-      .benchmark-chart {
-        max-width: 1000px;
-      }
-    </style>
-    <title>Benchmarks</title>
-  </head>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Besu EVM Benchmarks</title>
+<script src="data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --line: #e2e8f0;
+    --card: rgba(255, 255, 255, 0.78);
+    --card-solid: #ffffff;
+    --accent-1: #2563eb;
+    --accent-2: #9333ea;
+    --good-1: rgb(24, 84, 23);
+    --good-2: rgb(108, 168, 81);
+    --bad-1: rgb(176, 87, 87);
+    --bad-2: rgb(140, 40, 40);
+    --warn: rgb(180, 130, 40);
+    --neutral: #94a3b8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+  }
+  a { color: var(--accent-1); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace; font-size: 12.5px; }
 
-  <body>
-    <header id="header">
-      <div class="header-item">
-        <strong class="header-label">Last Update:</strong>
-        <span id="last-update"></span>
-      </div>
-      <div class="header-item">
-        <strong class="header-label">Repository:</strong>
-        <a id="repository-link" rel="noopener"></a>
-      </div>
-    </header>
-    <main id="main"></main>
-    <footer>
-      <button id="dl-button">Download data as JSON</button>
-      <div class="spacer"></div>
-      <div class="small">Powered by <a rel="noopener" href="https://github.com/marketplace/actions/continuous-benchmark">github-action-benchmark</a></div>
-    </footer>
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 22px 80px; }
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.2/dist/Chart.min.js"></script>
-    <script src="data.js"></script>
-    <script id="main-script">
-      'use strict';
-      (function() {
-        // Colors from https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-        const toolColors = {
-          cargo: '#dea584',
-          go: '#00add8',
-          benchmarkjs: '#f1e05a',
-          benchmarkluau: '#000080',
-          pytest: '#3572a5',
-          googlecpp: '#f34b7d',
-          catch2: '#f34b7d',
-          julia: '#a270ba',
-          jmh: '#b07219',
-          benchmarkdotnet: '#178600',
-          customBiggerIsBetter: '#38ff38',
-          customSmallerIsBetter: '#ff3838',
-          _: '#333333'
-        };
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.12), 0 2px 6px -2px rgba(15, 23, 42, 0.08);
+    padding: 22px 26px;
+  }
+  .card.solid {
+    background: var(--card-solid);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .card + .card { margin-top: 18px; }
+  .card-lift { transition: transform .15s ease, box-shadow .15s ease; }
+  .card-lift:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -10px rgba(15, 23, 42, 0.18); }
 
-        function init() {
-          function collectBenchesPerTestCase(entries) {
-            const map = new Map();
-            for (const entry of entries) {
-              const {commit, date, tool, benches} = entry;
-              for (const bench of benches) {
-                const result = { commit, date, tool, bench };
-                const arr = map.get(bench.name);
-                if (arr === undefined) {
-                  map.set(bench.name, [result]);
-                } else {
-                  arr.push(result);
-                }
-              }
-            }
-            return map;
-          }
+  /* header */
+  header.hero { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  header.hero .title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin: 0; line-height: 1.2; }
+  header.hero .title .gradient {
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  header.hero .tagline { color: var(--ink-3); margin: 6px 0 0; font-size: 14px; }
+  header.hero .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px;
+    background: white; border: 1px solid var(--line);
+    color: var(--ink-2); font-size: 12.5px; font-weight: 500;
+  }
+  header.hero .pill:hover { background: #f8fafc; }
+  header.hero .pill .arrow { font-size: 11px; opacity: 0.7; }
 
-          const data = window.BENCHMARK_DATA;
+  /* tab nav */
+  .tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 22px 0; }
+  .tab {
+    display: block; padding: 16px 18px; border-radius: 12px;
+    background: white; border: 1px solid var(--line);
+    text-decoration: none; transition: all .15s ease;
+  }
+  .tab:hover { transform: translateY(-1px); box-shadow: 0 6px 18px -8px rgba(15, 23, 42, 0.16); text-decoration: none; }
+  .tab .label { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; display: block; }
+  .tab .desc { font-size: 12px; color: var(--ink-3); }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    border: none;
+  }
+  .tab.active .label, .tab.active .desc { color: white; }
+  .tab.active .desc { opacity: 0.85; }
 
-          // Render header
-          document.getElementById('last-update').textContent = new Date(data.lastUpdate).toString();
-          const repoLink = document.getElementById('repository-link');
-          repoLink.href = data.repoUrl;
-          repoLink.textContent = data.repoUrl;
+  /* info callout */
+  .info-callout {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 20px; border-radius: 12px;
+    background: linear-gradient(135deg, #eff6ff, #faf5ff);
+    border: 1px solid #dbeafe;
+    margin-bottom: 18px;
+  }
+  .info-callout .icon {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    background: white; border: 1px solid #dbeafe;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-1); font-weight: 700; font-size: 18px;
+  }
+  .info-callout .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; flex: 1; }
+  .info-callout .item .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+  .info-callout .item .v { font-size: 14px; color: var(--ink); font-weight: 500; margin-top: 2px; }
+  .info-callout .item .v code { background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line); }
 
-          // Render footer
-          document.getElementById('dl-button').onclick = () => {
-            const dataUrl = 'data:,' + JSON.stringify(data, null, 2);
-            const a = document.createElement('a');
-            a.href = dataUrl;
-            a.download = 'benchmark_data.json';
-            a.click();
-          };
+  /* cards strip */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .stat { padding: 16px 18px; }
+  .stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); font-weight: 600; }
+  .stat .v { font-size: 28px; font-weight: 700; line-height: 1.1; margin-top: 4px; color: var(--ink); letter-spacing: -0.02em; }
+  .stat .h { font-size: 12px; color: var(--ink-3); margin-top: 4px; }
 
-          // Prepare data points for charts
-          return Object.keys(data.entries).map(name => ({
-            name,
-            dataSet: collectBenchesPerTestCase(data.entries[name]),
-          }));
-        }
+  /* section heading */
+  h2.section {
+    font-size: 20px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 0 0 14px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-1);
+    display: inline-block;
+  }
+  h2.section .hint { color: var(--ink-3); font-weight: 400; font-size: 13px; margin-left: 10px; }
 
-        function renderAllChars(dataSets) {
+  /* toolbar above tables */
+  .toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 0 0 14px; }
+  .toolbar input[type=text], .toolbar select {
+    padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px;
+    background: white; font: inherit; font-size: 13px; color: var(--ink);
+  }
+  .toolbar input[type=text] { flex: 1 1 240px; }
+  .toolbar input[type=text]:focus, .toolbar select:focus {
+    outline: none; border-color: var(--accent-1); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .toolbar .count { color: var(--ink-3); font-size: 12.5px; margin-left: auto; }
+  .toolbar .btn {
+    padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: white; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    text-decoration: none;
+  }
+  .toolbar .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.3); text-decoration: none; color: white; }
 
-          function renderGraph(parent, name, dataset) {
-            const canvas = document.createElement('canvas');
-            canvas.className = 'benchmark-chart';
-            parent.appendChild(canvas);
+  /* table */
+  .tbl-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); background: white; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+  th {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--ink-3); font-weight: 600;
+    background: #f8fafc; cursor: pointer; user-select: none;
+    position: sticky; top: 0;
+  }
+  th:hover { color: var(--ink); background: #f1f5f9; }
+  th.sort-asc::after { content: " ▲"; font-size: 9px; color: var(--accent-1); }
+  th.sort-desc::after { content: " ▼"; font-size: 9px; color: var(--accent-1); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f9fafb; }
+  td.bench { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; color: var(--ink-2); }
 
-            const color = toolColors[dataset.length > 0 ? dataset[0].tool : '_'];
-            const data = {
-              labels: dataset.map(d => d.commit.id.slice(0, 7)),
-              datasets: [
-                {
-                  label: name,
-                  data: dataset.map(d => d.bench.value),
-                  borderColor: color,
-                  backgroundColor: color + '60', // Add alpha for #rrggbbaa
-                  fill: 'origin',
-                  pointRadius: 0,
-                  pointHoverRadius: 4,
-                  lineTension: 0.25,
-                }
-              ],
-            };
-            const options = {
-              scales: {
-                xAxes: [
-                  {
-                    scaleLabel: {
-                      display: true,
-                      labelString: 'commit',
-                    },
-                  }
-                ],
-                yAxes: [
-                  {
-                    scaleLabel: {
-                      display: true,
-                      labelString: dataset.length > 0 ? dataset[0].bench.unit : '',
-                    },
-                    ticks: {
-                      beginAtZero: true,
-                    }
-                  }
-                ],
-              },
-              tooltips: {
-                callbacks: {
-                  afterTitle: items => {
-                    const {index} = items[0];
-                    const data = dataset[index];
-                    return '\n' + data.commit.message + '\n\n' + data.commit.timestamp + ' committed by @' + data.commit.committer.username + '\n';
-                  },
-                  label: item => {
-                    let label = item.value;
-                    const { range, unit } = dataset[item.index].bench;
-                    label += ' ' + unit;
-                    if (range) {
-                      label += ' (' + range + ')';
-                    }
-                    return label;
-                  },
-                  afterLabel: item => {
-                    const { extra } = dataset[item.index].bench;
-                    return extra ? '\n' + extra : '';
-                  }
-                }
-              },
-              onClick: (_mouseEvent, activeElems) => {
-                if (activeElems.length === 0) {
-                  return;
-                }
-                // XXX: Undocumented. How can we know the index?
-                const index = activeElems[0]._index;
-                const url = dataset[index].commit.url;
-                window.open(url, '_blank');
-              },
-            };
+  /* surface pill */
+  .pill-sm { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+  .pill-sm.jmh { background: #dbeafe; color: #1e3a8a; }
+  .pill-sm.evmtool { background: #ede9fe; color: #5b21b6; }
 
-            new Chart(canvas, {
-              type: 'line',
-              data,
-              options,
-            });
-          }
+  /* speedup cell — ethrex-style inline gradient background */
+  .speedup-cell {
+    display: inline-block; padding: 4px 12px; border-radius: 6px;
+    font-weight: 700; min-width: 64px; text-align: center;
+    color: white; font-variant-numeric: tabular-nums;
+  }
+  /* delta pill for the "all benchmarks" table */
+  .delta { display: inline-block; padding: 3px 9px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+  .delta.good { background: #dcfce7; color: #15803d; }
+  .delta.bad { background: #fee2e2; color: #b91c1c; }
+  .delta.flat { background: #f1f5f9; color: #64748b; }
 
-          function renderBenchSet(name, benchSet, main) {
-            const setElem = document.createElement('div');
-            setElem.className = 'benchmark-set';
-            main.appendChild(setElem);
+  /* verdict pill */
+  .verdict { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .verdict.good { background: #dcfce7; color: #15803d; }
+  .verdict.bad { background: #fee2e2; color: #b91c1c; }
+  .verdict.flat { background: #f1f5f9; color: #64748b; }
 
-            const nameElem = document.createElement('h1');
-            nameElem.className = 'benchmark-title';
-            nameElem.textContent = name;
-            setElem.appendChild(nameElem);
+  /* chart */
+  .chart-wrap { padding: 12px 4px; background: white; border-radius: 12px; border: 1px solid var(--line); }
+  .chart-wrap canvas { width: 100% !important; max-height: 360px; }
+  .chart-empty { padding: 32px 18px; color: var(--ink-3); font-size: 13px; text-align: center; }
 
-            const graphsElem = document.createElement('div');
-            graphsElem.className = 'benchmark-graphs';
-            setElem.appendChild(graphsElem);
+  /* footer */
+  footer.foot { margin-top: 32px; padding-top: 18px; color: var(--ink-3); font-size: 12.5px; text-align: center; border-top: 1px solid var(--line); }
+  footer.foot a { color: var(--ink-2); }
+  .back-to-top {
+    position: fixed; bottom: 24px; right: 24px;
+    padding: 10px 16px; border-radius: 999px; font-size: 12.5px;
+    background: var(--ink); color: white; text-decoration: none;
+    box-shadow: 0 8px 18px -4px rgba(15, 23, 42, 0.3);
+    display: none; align-items: center; gap: 6px;
+  }
+  .back-to-top.visible { display: inline-flex; }
+  .back-to-top:hover { background: var(--accent-1); text-decoration: none; color: white; }
+</style>
+</head>
+<body>
+<div class="wrap">
 
-            for (const [benchName, benches] of benchSet.entries()) {
-              renderGraph(graphsElem, benchName, benches)
-            }
-          }
+<header class="hero card">
+  <div>
+    <h1 class="title"><span class="gradient">Besu EVM Benchmarks</span></h1>
+    <p class="tagline">Continuous performance tracking for the Besu Execution Layer client. LFDT mentorship #69.</p>
+  </div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <a class="pill" href="https://github.com/parthdagia05/besu/tree/bench-poc" target="_blank" rel="noopener">
+      <span>github.com/parthdagia05/besu</span><span class="arrow">↗</span>
+    </a>
+    <a class="pill" href="https://github.com/LF-Decentralized-Trust-Mentorships/mentorship-program/issues/69" target="_blank" rel="noopener">
+      <span>Issue #69</span><span class="arrow">↗</span>
+    </a>
+  </div>
+</header>
 
-          const main = document.getElementById('main');
-          for (const {name, dataSet} of dataSets) {
-            renderBenchSet(name, dataSet, main);
-          }
-        }
+<nav class="tabs">
+  <a class="tab active" href="#pairs">
+    <span class="label">V1 vs V2</span>
+    <span class="desc">EVM v2 refactor deltas</span>
+  </a>
+  <a class="tab" href="#all">
+    <span class="label">All benchmarks</span>
+    <span class="desc">Latest vs previous run</span>
+  </a>
+  <a class="tab" href="#precompiles">
+    <span class="label">Precompiles</span>
+    <span class="desc">evmtool benchmark</span>
+  </a>
+  <a class="tab" href="#trend">
+    <span class="label">Trend</span>
+    <span class="desc">Time-series chart</span>
+  </a>
+</nav>
 
-        renderAllChars(init()); // Start
-      })();
-    </script>
-  </body>
+<div class="info-callout">
+  <div class="icon">i</div>
+  <div class="grid">
+    <div class="item"><div class="k">Last updated</div><div class="v" id="info-time">—</div></div>
+    <div class="item"><div class="k">Latest commit</div><div class="v"><code id="info-sha">—</code></div></div>
+    <div class="item"><div class="k">Runs recorded</div><div class="v" id="info-runs">—</div></div>
+    <div class="item"><div class="k">Benchmarks</div><div class="v" id="info-count">—</div></div>
+  </div>
+</div>
+
+<div class="stats" id="stats-strip" style="margin-bottom:22px"></div>
+
+<div class="card solid" id="pairs-section" style="margin-bottom:22px">
+  <h2 class="section">Comparison between v1 and v2 implementations <span class="hint">lower is better; ns/op</span></h2>
+  <div class="toolbar">
+    <input type="text" id="pair-filter" placeholder="Filter operations…" />
+    <a class="btn" href="#trend">View time-series →</a>
+    <span class="count" id="pair-count"></span>
+  </div>
+  <div class="tbl-wrap">
+    <table id="pairs">
+      <thead>
+        <tr>
+          <th data-sort="op">Operation</th>
+          <th data-sort="case">Case</th>
+          <th class="num" data-sort="v1">V1 (ns/op)</th>
+          <th class="num" data-sort="v2">V2 (ns/op)</th>
+          <th class="num" data-sort="speedup">Speedup</th>
+          <th data-sort="verdict">Verdict</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card solid" id="all-section" style="margin-bottom:22px">
+  <h2 class="section">All benchmarks <span class="hint">latest run vs previous run</span></h2>
+  <div class="toolbar">
+    <input type="text" id="all-filter" placeholder="Filter benchmarks…" />
+    <select id="all-surface">
+      <option value="all">All surfaces</option>
+      <option value="jmh">JMH only</option>
+      <option value="evmtool">evmtool only</option>
+    </select>
+    <span class="count" id="all-count"></span>
+  </div>
+  <div class="tbl-wrap">
+    <table id="all">
+      <thead>
+        <tr>
+          <th data-sort="name">Benchmark</th>
+          <th data-sort="surface">Surface</th>
+          <th class="num" data-sort="latest">Latest (ns/op)</th>
+          <th class="num" data-sort="prev">Previous (ns/op)</th>
+          <th class="num" data-sort="delta">Δ</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card solid" id="precompiles-section" style="margin-bottom:22px">
+  <h2 class="section">Precompiles <span class="hint">from <code>evmtool benchmark</code></span></h2>
+  <div class="toolbar">
+    <input type="text" id="pre-filter" placeholder="Filter precompiles…" />
+    <span class="count" id="pre-count"></span>
+  </div>
+  <div class="tbl-wrap">
+    <table id="precompiles">
+      <thead>
+        <tr>
+          <th data-sort="precompile">Precompile</th>
+          <th data-sort="case">Case</th>
+          <th class="num" data-sort="latest">Latest (ns/op)</th>
+          <th class="num" data-sort="prev">Previous (ns/op)</th>
+          <th class="num" data-sort="delta">Δ</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card solid" id="trend-section">
+  <h2 class="section">Trend <span class="hint">per-benchmark history across all runs</span></h2>
+  <div class="toolbar">
+    <select id="trend-pick" style="flex:1 1 280px"><option value="">— select a benchmark —</option></select>
+  </div>
+  <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+  <div class="chart-empty" id="trend-empty" style="display:none">Select a benchmark above to see its history.</div>
+</div>
+
+<footer class="foot">
+  Continuous benchmarking POC ·
+  <a href="https://github.com/parthdagia05/besu/blob/bench-poc/docs/benchmarks/README.md" target="_blank" rel="noopener">how this works</a> ·
+  <a href="https://github.com/parthdagia05/besu/actions/workflows/evm-benchmarks.yml" target="_blank" rel="noopener">workflow runs</a> ·
+  <a href="data.js">raw data.js</a>
+</footer>
+
+</div>
+
+<a class="back-to-top" href="#" id="back-to-top">↑ Top</a>
+
+<script>
+(() => {
+  const DATA = window.BENCHMARK_DATA;
+  if (!DATA || !DATA.entries) {
+    document.querySelector('.wrap').innerHTML =
+      '<div class="card"><p style="color:#b91c1c">No <code>data.js</code> found. The first workflow run has not finished yet.</p></div>';
+    return;
+  }
+
+  const suiteName = Object.keys(DATA.entries)[0];
+  const runs = DATA.entries[suiteName] || [];
+  if (runs.length === 0) {
+    document.querySelector('.wrap').innerHTML =
+      '<div class="card"><p style="color:#b91c1c">No runs in <code>data.js</code> yet.</p></div>';
+    return;
+  }
+
+  const latest = runs[runs.length - 1];
+  const prev = runs.length > 1 ? runs[runs.length - 2] : null;
+
+  // ----- helpers
+  function isJmh(b) { return !b.name.startsWith('evmtool.'); }
+  function parseName(name) {
+    if (name.startsWith('evmtool.')) {
+      const [, precompile, ...rest] = name.split('.');
+      return { className: precompile, method: rest.join('.'), params: { case: rest.join('.') }, surface: 'evmtool' };
+    }
+    const m = name.match(/^(.*?)\s*\(\s*(\{.*?\})\s*\)\s*$/);
+    const head = m ? m[1] : name;
+    let params = {};
+    try { params = m ? JSON.parse(m[2]) : {}; } catch (_) { /* ignore */ }
+    const parts = head.split('.');
+    return {
+      className: parts[parts.length - 2] || head,
+      method: parts[parts.length - 1] || '',
+      params,
+      surface: 'jmh',
+    };
+  }
+  function caseLabel(params) {
+    return params.caseName || params.scenario || params.case || Object.values(params)[0] || '—';
+  }
+  function shortName(name) {
+    const p = parseName(name);
+    if (p.surface === 'evmtool') return name;
+    const cs = caseLabel(p.params);
+    return cs === '—' ? `${p.className}.${p.method}` : `${p.className}.${p.method}[${cs}]`;
+  }
+  function fmt(x, dp) { dp = dp == null ? 2 : dp; return Number(x).toFixed(dp).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function fmtPct(p) { return (p >= 0 ? '+' : '') + p.toFixed(2) + '%'; }
+
+  // colour ramp for speedup cell (inspired by ethrex's matrix). >1 means v2 is faster.
+  function speedupBg(s) {
+    if (!isFinite(s)) return 'rgb(148, 163, 184)';
+    if (s >= 3.0) return 'rgb(20, 83, 45)';      // very dark green
+    if (s >= 2.0) return 'rgb(34, 134, 58)';     // dark green
+    if (s >= 1.5) return 'rgb(74, 161, 80)';     // mid green
+    if (s >= 1.10) return 'rgb(108, 168, 81)';   // light green
+    if (s >= 0.95) return 'rgb(120, 120, 120)';  // neutral gray
+    if (s >= 0.75) return 'rgb(176, 87, 87)';    // dusty red
+    return 'rgb(140, 40, 40)';                   // dark red
+  }
+  function deltaCls(d, hasPrev) {
+    if (!hasPrev) return 'flat';
+    if (d <= -1) return 'good';
+    if (d >= 1) return 'bad';
+    return 'flat';
+  }
+
+  // ----- info callout fields
+  const lastUpdate = new Date(DATA.lastUpdate);
+  document.getElementById('info-time').textContent = lastUpdate.toUTCString();
+  document.getElementById('info-sha').textContent = (latest.commit && latest.commit.id || '').slice(0, 7) || '—';
+  document.getElementById('info-runs').textContent = runs.length;
+
+  const jmhCount = latest.benches.filter(isJmh).length;
+  const evmtoolCount = latest.benches.length - jmhCount;
+  document.getElementById('info-count').textContent =
+    `${latest.benches.length} (${jmhCount} JMH + ${evmtoolCount} precompile)`;
+
+  // ----- v1 vs v2 pairing
+  function buildPairs() {
+    const m = new Map();
+    for (const b of latest.benches) {
+      if (!isJmh(b)) continue;
+      const p = parseName(b.name);
+      const isV2 = p.className.endsWith('V2');
+      const root = isV2 ? p.className.slice(0, -2) : p.className;
+      const cs = caseLabel(p.params);
+      const key = `${root}|${p.method}|${cs}`;
+      const slot = m.get(key) || { op: root, method: p.method, case: cs, v1: null, v2: null };
+      if (isV2) slot.v2 = b.value; else slot.v1 = b.value;
+      m.set(key, slot);
+    }
+    return Array.from(m.values()).filter(p => p.v1 != null && p.v2 != null);
+  }
+  const pairs = buildPairs();
+
+  // ----- stats strip
+  const stats = [];
+  stats.push({ k: 'Total benchmarks', v: latest.benches.length, h: `${jmhCount} JMH + ${evmtoolCount} precompile` });
+  stats.push({ k: 'V2 ports paired', v: pairs.length, h: 'v1 vs v2 with matched case' });
+  if (pairs.length) {
+    const speedups = pairs.map(p => p.v1 / p.v2);
+    const meanSpeedup = speedups.reduce((a, b) => a + b, 0) / speedups.length;
+    const maxSpeedup = Math.max(...speedups);
+    const minSpeedup = Math.min(...speedups);
+    stats.push({ k: 'Mean speedup', v: meanSpeedup.toFixed(2) + '×', h: `range ${minSpeedup.toFixed(2)}–${maxSpeedup.toFixed(2)}×` });
+  } else {
+    stats.push({ k: 'Mean speedup', v: '—', h: 'no v1/v2 pairs yet' });
+  }
+  stats.push({ k: 'Runs in history', v: runs.length, h: runs.length > 1 ? `since ${new Date(runs[0].date).toISOString().slice(0,10)}` : 'one run so far' });
+  document.getElementById('stats-strip').innerHTML = stats.map(s =>
+    `<div class="card stat card-lift">
+       <div class="k">${s.k}</div>
+       <div class="v">${s.v}</div>
+       <div class="h">${s.h}</div>
+     </div>`
+  ).join('');
+
+  // ----- sortable table helper
+  function attachTable(tableId, rows, render, sortDefault) {
+    const tbl = document.getElementById(tableId);
+    let sortKey = sortDefault.key;
+    let sortDir = sortDefault.dir;
+    let filtered = rows.slice();
+
+    function paint() {
+      const sorted = filtered.slice().sort((a, b) => {
+        const av = a[sortKey], bv = b[sortKey];
+        if (typeof av === 'number' && typeof bv === 'number') return sortDir * (av - bv);
+        return sortDir * String(av ?? '').localeCompare(String(bv ?? ''));
+      });
+      tbl.querySelector('tbody').innerHTML = sorted.length
+        ? sorted.map(render).join('')
+        : '<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:24px">no rows</td></tr>';
+      tbl.querySelectorAll('th').forEach(th => {
+        th.classList.toggle('sort-asc', th.dataset.sort === sortKey && sortDir === 1);
+        th.classList.toggle('sort-desc', th.dataset.sort === sortKey && sortDir === -1);
+      });
+    }
+
+    tbl.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', () => {
+      if (th.dataset.sort === sortKey) sortDir = -sortDir;
+      else { sortKey = th.dataset.sort; sortDir = 1; }
+      paint();
+    }));
+
+    return {
+      setFilter(predicate) { filtered = rows.filter(predicate); paint(); },
+      paint,
+    };
+  }
+
+  // ----- pairs table
+  function verdictPill(s) {
+    if (s >= 1.10) return '<span class="verdict good">Improvement</span>';
+    if (s <= 0.90) return '<span class="verdict bad">Newly slow</span>';
+    return '<span class="verdict flat">Stable</span>';
+  }
+
+  const pairsRows = pairs.map(p => ({
+    op: p.op, case: p.case,
+    v1: p.v1, v2: p.v2,
+    speedup: p.v1 / p.v2,
+  }));
+  const pairsTable = attachTable('pairs', pairsRows, row => {
+    const s = row.speedup;
+    return `<tr>
+      <td class="bench">${row.op}</td>
+      <td class="mono">${row.case}</td>
+      <td class="num">${fmt(row.v1)}</td>
+      <td class="num">${fmt(row.v2)}</td>
+      <td class="num"><span class="speedup-cell" style="background:${speedupBg(s)}">${s.toFixed(2)}×</span></td>
+      <td>${verdictPill(s)}</td>
+    </tr>`;
+  }, { key: 'speedup', dir: -1 });
+
+  const pairFilter = document.getElementById('pair-filter');
+  function applyPairFilter() {
+    const q = pairFilter.value.toLowerCase();
+    pairsTable.setFilter(r => !q || r.op.toLowerCase().includes(q) || (r.case || '').toLowerCase().includes(q));
+    document.getElementById('pair-count').textContent = `${document.querySelectorAll('#pairs tbody tr').length} row(s)`;
+  }
+  pairFilter.addEventListener('input', applyPairFilter);
+  pairsTable.paint();
+  applyPairFilter();
+
+  // ----- all-benchmarks table
+  const allRows = latest.benches.map(b => {
+    const prevBench = prev ? prev.benches.find(x => x.name === b.name) : null;
+    const latest_v = b.value;
+    const prev_v = prevBench ? prevBench.value : null;
+    const delta = prev_v ? (latest_v - prev_v) / prev_v * 100 : null;
+    return {
+      name: shortName(b.name),
+      fullName: b.name,
+      surface: isJmh(b) ? 'jmh' : 'evmtool',
+      latest: latest_v,
+      prev: prev_v ?? 0,
+      delta: delta ?? 0,
+      hasPrev: prev_v != null,
+    };
+  });
+
+  const allTable = attachTable('all', allRows, row => {
+    const dc = deltaCls(row.delta, row.hasPrev);
+    const deltaTxt = !row.hasPrev ? '—' : fmtPct(row.delta);
+    const prevTxt = row.hasPrev ? fmt(row.prev) : '—';
+    return `<tr>
+      <td class="bench">${row.name}</td>
+      <td><span class="pill-sm ${row.surface}">${row.surface}</span></td>
+      <td class="num">${fmt(row.latest)}</td>
+      <td class="num">${prevTxt}</td>
+      <td class="num"><span class="delta ${dc}">${deltaTxt}</span></td>
+    </tr>`;
+  }, { key: 'latest', dir: -1 });
+
+  const allFilter = document.getElementById('all-filter');
+  const allSurface = document.getElementById('all-surface');
+  function applyAllFilter() {
+    const q = allFilter.value.toLowerCase();
+    const surf = allSurface.value;
+    allTable.setFilter(r =>
+      (surf === 'all' || r.surface === surf) &&
+      (!q || r.name.toLowerCase().includes(q))
+    );
+    document.getElementById('all-count').textContent =
+      `${document.querySelectorAll('#all tbody tr').length} row(s)`;
+  }
+  allFilter.addEventListener('input', applyAllFilter);
+  allSurface.addEventListener('change', applyAllFilter);
+  allTable.paint();
+  applyAllFilter();
+
+  // ----- precompiles table
+  const preRows = latest.benches.filter(b => !isJmh(b)).map(b => {
+    const p = parseName(b.name);
+    const prevBench = prev ? prev.benches.find(x => x.name === b.name) : null;
+    const prev_v = prevBench ? prevBench.value : null;
+    const delta = prev_v ? (b.value - prev_v) / prev_v * 100 : null;
+    return {
+      precompile: p.className,
+      case: caseLabel(p.params),
+      latest: b.value,
+      prev: prev_v ?? 0,
+      delta: delta ?? 0,
+      hasPrev: prev_v != null,
+    };
+  });
+  const preTable = attachTable('precompiles', preRows, row => {
+    const dc = deltaCls(row.delta, row.hasPrev);
+    const deltaTxt = !row.hasPrev ? '—' : fmtPct(row.delta);
+    const prevTxt = row.hasPrev ? fmt(row.prev) : '—';
+    return `<tr>
+      <td class="bench">${row.precompile}</td>
+      <td class="mono">${row.case}</td>
+      <td class="num">${fmt(row.latest)}</td>
+      <td class="num">${prevTxt}</td>
+      <td class="num"><span class="delta ${dc}">${deltaTxt}</span></td>
+    </tr>`;
+  }, { key: 'latest', dir: -1 });
+
+  const preFilter = document.getElementById('pre-filter');
+  function applyPreFilter() {
+    const q = preFilter.value.toLowerCase();
+    preTable.setFilter(r => !q || r.precompile.toLowerCase().includes(q) || (r.case || '').toLowerCase().includes(q));
+    document.getElementById('pre-count').textContent = `${document.querySelectorAll('#precompiles tbody tr').length} row(s)`;
+  }
+  preFilter.addEventListener('input', applyPreFilter);
+  preTable.paint();
+  applyPreFilter();
+
+  // ----- trend chart
+  const pick = document.getElementById('trend-pick');
+  const allBenchNames = Array.from(new Set(runs.flatMap(r => r.benches.map(b => b.name)))).sort();
+  for (const n of allBenchNames) {
+    const opt = document.createElement('option');
+    opt.value = n; opt.textContent = shortName(n);
+    pick.appendChild(opt);
+  }
+
+  let chart = null;
+  function drawChart(name) {
+    const empty = document.getElementById('trend-empty');
+    const canvas = document.getElementById('trend-chart');
+    if (!name) {
+      empty.style.display = 'block'; canvas.parentElement.style.display = 'none';
+      if (chart) { chart.destroy(); chart = null; }
+      return;
+    }
+    empty.style.display = 'none'; canvas.parentElement.style.display = 'block';
+    const points = runs
+      .map(r => ({ d: new Date(r.date), b: r.benches.find(x => x.name === name) }))
+      .filter(p => p.b);
+    if (chart) chart.destroy();
+
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, 360);
+    grad.addColorStop(0, 'rgba(37, 99, 235, 0.28)');
+    grad.addColorStop(1, 'rgba(147, 51, 234, 0.04)');
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: points.map(p => p.d.toISOString().slice(0, 16).replace('T', ' ')),
+        datasets: [{
+          label: shortName(name) + ' (ns/op)',
+          data: points.map(p => p.b.value),
+          borderColor: '#2563eb',
+          backgroundColor: grad,
+          fill: true,
+          tension: 0.25,
+          pointRadius: 4,
+          pointBackgroundColor: '#2563eb',
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true, position: 'top', labels: { font: { family: 'inherit' } } },
+          tooltip: { backgroundColor: '#0f172a', cornerRadius: 6, padding: 10 },
+        },
+        scales: {
+          y: { beginAtZero: false, title: { display: true, text: 'ns/op (lower is better)' }, grid: { color: '#e2e8f0' } },
+          x: { grid: { display: false } },
+        },
+      },
+    });
+  }
+  pick.addEventListener('change', () => drawChart(pick.value));
+
+  const defaultBench = allBenchNames.find(n => n.includes('AddOperationBenchmarkV2'))
+                    || allBenchNames.find(n => n.includes('AddOperationBenchmark'))
+                    || allBenchNames[0];
+  if (defaultBench) { pick.value = defaultBench; drawChart(defaultBench); }
+
+  // ----- back-to-top + active tab highlighting
+  const btt = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    btt.classList.toggle('visible', window.scrollY > 600);
+  });
+  btt.addEventListener('click', e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  const tabs = document.querySelectorAll('nav.tabs .tab');
+  function setActiveTab(hash) {
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === hash));
+  }
+  tabs.forEach(t => t.addEventListener('click', () => setActiveTab(t.getAttribute('href'))));
+})();
+</script>
+</body>
 </html>
