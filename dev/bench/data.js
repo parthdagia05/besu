@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779611551215,
+  "lastUpdate": 1779703639538,
   "repoUrl": "https://github.com/parthdagia05/besu",
   "entries": {
     "Besu EVM JMH Benchmarks": [
@@ -3028,6 +3028,388 @@ window.BENCHMARK_DATA = {
           {
             "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SubOperationBenchmarkV2.executeOperation ( {\"caseName\":\"SUB_RANDOM_RANDOM\"} )",
             "value": 9.727135897415668,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Parth Dagia",
+            "username": "parthdagia05",
+            "email": "parth.24bcs10414@sst.scaler.com"
+          },
+          "committer": {
+            "name": "Parth Dagia",
+            "username": "parthdagia05",
+            "email": "parth.24bcs10414@sst.scaler.com"
+          },
+          "id": "486c28245800114770c863df5eb03c3dc906c166",
+          "message": "Redesign landing dashboard with ethrex-inspired visual style\n\nEarlier version was too plain to read as a continuous-benchmarking\ndashboard. Restructures the page around the visual language ethrex\nuses on benchmarks.ethrex.xyz:\n\n- gradient header card with blue->purple title and a tagline;\n- tab anchor nav row (V1 vs V2 / All benchmarks / Precompiles /\n  Trend) — clicking scrolls to the matching section;\n- info callout card with last-update, latest commit, runs recorded,\n  and the JMH+precompile bench counts;\n- stats strip — Total benchmarks, V2 ports paired, Mean speedup\n  (with min/max range), Runs in history;\n- v1-vs-v2 comparison table with ethrex-style speedup cells: the\n  multiplier sits inside a coloured pill whose background ramps from\n  dark green (>=3x) to light green (>=1.1x) to grey to dusty red\n  (<0.95x) to dark red (<0.75x);\n- dedicated precompiles table for the evmtool benchmark surface;\n- trend chart with a soft blue->purple linear gradient fill and a\n  darker tooltip on hover;\n- floating back-to-top pill that appears after scrolling.\n\nVisuals: rounded-2xl cards over a slate gradient background, glass\nwhite/78 backdrop-blur on the header and callout, system sans-serif\nthroughout, tabular-nums on every numeric column. No external CSS or\nJS framework — Chart.js stays the only CDN dep.\n\nVerdict pill on each pair row uses the Improvement / Stable /\nNewly slow vocabulary from PR #9775.\n\nSigned-off-by: Parth Dagia <parth.24bcs10414@sst.scaler.com>",
+          "timestamp": "2026-05-21T05:39:21Z",
+          "url": "https://github.com/parthdagia05/besu/commit/486c28245800114770c863df5eb03c3dc906c166"
+        },
+        "date": 1779703638746,
+        "tool": "jmh",
+        "benches": [
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.AddOperationBenchmark.executeOperation ( {\"caseName\":\"ADD_RANDOM_RANDOM\"} )",
+            "value": 94.65025636323828,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.DivOperationBenchmark.executeOperation ( {\"caseName\":\"DIV_RANDOM_RANDOM\"} )",
+            "value": 102.72827851058632,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ModOperationBenchmark.executeOperation ( {\"caseName\":\"MOD_RANDOM_RANDOM\"} )",
+            "value": 108.11033178760181,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.MulOperationBenchmark.executeOperation ( {\"caseName\":\"MUL_RANDOM_RANDOM\"} )",
+            "value": 175.32608490212414,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_0\"} )",
+            "value": 84.85927514706519,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"NEGATIVE_SHIFT_1\"} )",
+            "value": 86.74732669987745,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"ALL_BITS_SHIFT_1\"} )",
+            "value": 86.12951527681437,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"POSITIVE_SHIFT_1\"} )",
+            "value": 94.52854114817332,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"NEGATIVE_SHIFT_128\"} )",
+            "value": 103.34488662235549,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"NEGATIVE_SHIFT_255\"} )",
+            "value": 98.93808157504569,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"POSITIVE_SHIFT_128\"} )",
+            "value": 70.02121910246375,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"POSITIVE_SHIFT_255\"} )",
+            "value": 34.44940037290469,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"OVERFLOW_SHIFT_256\"} )",
+            "value": 25.474834402382108,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"OVERFLOW_LARGE_SHIFT\"} )",
+            "value": 22.61666412686367,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 79.81097984927942,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShlOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_0\"} )",
+            "value": 49.83899865504445,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShlOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_1\"} )",
+            "value": 88.58590165841127,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShlOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_128\"} )",
+            "value": 70.02867830502046,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShlOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_255\"} )",
+            "value": 36.44749006454906,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShlOperationBenchmark.executeOperation ( {\"scenario\":\"OVERFLOW_SHIFT_256\"} )",
+            "value": 19.299858463367364,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShlOperationBenchmark.executeOperation ( {\"scenario\":\"OVERFLOW_LARGE_SHIFT\"} )",
+            "value": 16.88779292326321,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShlOperationBenchmark.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 69.11454487067692,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShrOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_0\"} )",
+            "value": 66.14572818550747,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShrOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_1\"} )",
+            "value": 79.7908081419072,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShrOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_128\"} )",
+            "value": 72.22339242619327,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShrOperationBenchmark.executeOperation ( {\"scenario\":\"SHIFT_255\"} )",
+            "value": 34.98804275200033,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShrOperationBenchmark.executeOperation ( {\"scenario\":\"OVERFLOW_SHIFT_256\"} )",
+            "value": 19.050162782727377,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShrOperationBenchmark.executeOperation ( {\"scenario\":\"OVERFLOW_LARGE_SHIFT\"} )",
+            "value": 16.86328926359975,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShrOperationBenchmark.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 72.71405887911858,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SubOperationBenchmark.executeOperation ( {\"caseName\":\"SUB_RANDOM_RANDOM\"} )",
+            "value": 144.132912125196,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.AddOperationBenchmarkV2.executeOperation ( {\"caseName\":\"ADD_RANDOM_RANDOM\"} )",
+            "value": 11.964142729658262,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.DivOperationBenchmarkV2.executeOperation ( {\"caseName\":\"DIV_RANDOM_RANDOM\"} )",
+            "value": 65.62299863015514,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ModOperationBenchmarkV2.executeOperation ( {\"caseName\":\"MOD_RANDOM_RANDOM\"} )",
+            "value": 68.87751416481191,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.MulOperationBenchmarkV2.executeOperation ( {\"caseName\":\"MUL_RANDOM_RANDOM\"} )",
+            "value": 53.409639796191016,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_0\"} )",
+            "value": 6.844639935500075,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"NEGATIVE_SHIFT_1\"} )",
+            "value": 9.782385827653593,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"ALL_BITS_SHIFT_1\"} )",
+            "value": 9.527972379726743,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"POSITIVE_SHIFT_1\"} )",
+            "value": 8.94073427237286,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"NEGATIVE_SHIFT_128\"} )",
+            "value": 7.803026592509008,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"NEGATIVE_SHIFT_255\"} )",
+            "value": 8.211576826693594,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"POSITIVE_SHIFT_128\"} )",
+            "value": 7.701187304289649,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"POSITIVE_SHIFT_255\"} )",
+            "value": 7.537337134528357,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"OVERFLOW_SHIFT_256\"} )",
+            "value": 7.872150332194309,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"OVERFLOW_LARGE_SHIFT\"} )",
+            "value": 7.927015086297372,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 16.836996113333573,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShlOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_0\"} )",
+            "value": 6.944456705088679,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShlOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_1\"} )",
+            "value": 9.641544610147061,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShlOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_128\"} )",
+            "value": 7.682582161242635,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShlOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_255\"} )",
+            "value": 7.836428695725151,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShlOperationBenchmarkV2.executeOperation ( {\"scenario\":\"OVERFLOW_SHIFT_256\"} )",
+            "value": 8.408186193976116,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShlOperationBenchmarkV2.executeOperation ( {\"scenario\":\"OVERFLOW_LARGE_SHIFT\"} )",
+            "value": 8.458609667437518,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShlOperationBenchmarkV2.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 10.132614742631631,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShrOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_0\"} )",
+            "value": 6.924876223129978,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShrOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_1\"} )",
+            "value": 9.051653981322863,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShrOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_128\"} )",
+            "value": 7.561840499847503,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShrOperationBenchmarkV2.executeOperation ( {\"scenario\":\"SHIFT_255\"} )",
+            "value": 7.6523713335551165,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShrOperationBenchmarkV2.executeOperation ( {\"scenario\":\"OVERFLOW_SHIFT_256\"} )",
+            "value": 8.386519840365,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShrOperationBenchmarkV2.executeOperation ( {\"scenario\":\"OVERFLOW_LARGE_SHIFT\"} )",
+            "value": 8.45242743266203,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShrOperationBenchmarkV2.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 10.063483804118052,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SubOperationBenchmarkV2.executeOperation ( {\"caseName\":\"SUB_RANDOM_RANDOM\"} )",
+            "value": 12.07417753482443,
             "unit": "ns/op",
             "extra": "iterations: 5\nforks: 1\nthreads: 1"
           }
