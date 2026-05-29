@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779962558122,
+  "lastUpdate": 1780042430301,
   "repoUrl": "https://github.com/parthdagia05/besu",
   "entries": {
     "Besu EVM JMH Benchmarks": [
@@ -4558,6 +4558,232 @@ window.BENCHMARK_DATA = {
             "value": 9.423493305961978,
             "unit": "ns/op",
             "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Parth Dagia",
+            "username": "parthdagia05",
+            "email": "parth.24bcs10414@sst.scaler.com"
+          },
+          "committer": {
+            "name": "Parth Dagia",
+            "username": "parthdagia05",
+            "email": "parth.24bcs10414@sst.scaler.com"
+          },
+          "id": "090e3e57af62a2297e5cac727051e96725c6caf9",
+          "message": "Drop trailing space breaking bash line continuation in JMH step\n\nLine 87 ended with `\\<space>` instead of `\\<newline>`, which bash\ntreats as an escaped literal space rather than a line continuation.\nThe unescaped newline terminated the gradle invocation after the\ntask path, so gradle saw an empty second argument and failed with\n\"Cannot locate matching tasks for an empty path.\" The -Pincludes,\n-Pcases, -PjmhFork and --rerun-tasks arguments on the following\nlines were parsed as separate shell commands that bash -e aborted\nbefore they could run.\n\nStrip the trailing space so the backslash genuinely continues the\nline. Other continuation lines in the same step are already clean;\nthis was a single-character regression hidden behind the recent\ninline-comment additions on neighbouring lines.\n\nSigned-off-by: Parth Dagia <parth.24bcs10414@sst.scaler.com>",
+          "timestamp": "2026-05-29T07:57:03Z",
+          "url": "https://github.com/parthdagia05/besu/commit/090e3e57af62a2297e5cac727051e96725c6caf9"
+        },
+        "date": 1780042429305,
+        "tool": "jmh",
+        "benches": [
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.AddOperationBenchmark.executeOperation ( {\"caseName\":\"ADD_RANDOM_RANDOM\"} )",
+            "value": 95.79300919902735,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.DivOperationBenchmark.executeOperation ( {\"caseName\":\"DIV_RANDOM_RANDOM\"} )",
+            "value": 105.91593602460122,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ModOperationBenchmark.executeOperation ( {\"caseName\":\"MOD_RANDOM_RANDOM\"} )",
+            "value": 111.65254687016849,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.MulOperationBenchmark.executeOperation ( {\"caseName\":\"MUL_RANDOM_RANDOM\"} )",
+            "value": 191.7808133707275,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SarOperationBenchmark.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 84.67311247027676,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShlOperationBenchmark.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 77.58309578230391,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.ShrOperationBenchmark.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 75.00943887136911,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.SubOperationBenchmark.executeOperation ( {\"caseName\":\"SUB_RANDOM_RANDOM\"} )",
+            "value": 161.27369179394978,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.AddOperationBenchmarkV2.executeOperation ( {\"caseName\":\"ADD_RANDOM_RANDOM\"} )",
+            "value": 11.324414452951613,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.DivOperationBenchmarkV2.executeOperation ( {\"caseName\":\"DIV_RANDOM_RANDOM\"} )",
+            "value": 69.44634258130344,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ModOperationBenchmarkV2.executeOperation ( {\"caseName\":\"MOD_RANDOM_RANDOM\"} )",
+            "value": 72.79461117085239,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.MulOperationBenchmarkV2.executeOperation ( {\"caseName\":\"MUL_RANDOM_RANDOM\"} )",
+            "value": 59.94607162529811,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SarOperationBenchmarkV2.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 10.666114365392527,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShlOperationBenchmarkV2.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 9.617049789382747,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.ShrOperationBenchmarkV2.executeOperation ( {\"scenario\":\"FULL_RANDOM\"} )",
+            "value": 10.758337803405896,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "org.hyperledger.besu.ethereum.vm.operations.v2.SubOperationBenchmarkV2.executeOperation ( {\"caseName\":\"SUB_RANDOM_RANDOM\"} )",
+            "value": 12.12682491667633,
+            "unit": "ns/op",
+            "extra": "iterations: 5\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=0 ( {\"precompile\":\"sha256\",\"case\":\"size=0\"} )",
+            "value": 980.7,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=16 ( {\"precompile\":\"sha256\",\"case\":\"size=16\"} )",
+            "value": 384.7,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=32 ( {\"precompile\":\"sha256\",\"case\":\"size=32\"} )",
+            "value": 326.3,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=48 ( {\"precompile\":\"sha256\",\"case\":\"size=48\"} )",
+            "value": 141.3,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=64 ( {\"precompile\":\"sha256\",\"case\":\"size=64\"} )",
+            "value": 212.7,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=80 ( {\"precompile\":\"sha256\",\"case\":\"size=80\"} )",
+            "value": 217.6,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=96 ( {\"precompile\":\"sha256\",\"case\":\"size=96\"} )",
+            "value": 216.3,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=112 ( {\"precompile\":\"sha256\",\"case\":\"size=112\"} )",
+            "value": 222.1,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=128 ( {\"precompile\":\"sha256\",\"case\":\"size=128\"} )",
+            "value": 234.4,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=144 ( {\"precompile\":\"sha256\",\"case\":\"size=144\"} )",
+            "value": 351.5,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=160 ( {\"precompile\":\"sha256\",\"case\":\"size=160\"} )",
+            "value": 222.3,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=176 ( {\"precompile\":\"sha256\",\"case\":\"size=176\"} )",
+            "value": 216,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=192 ( {\"precompile\":\"sha256\",\"case\":\"size=192\"} )",
+            "value": 255.8,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=208 ( {\"precompile\":\"sha256\",\"case\":\"size=208\"} )",
+            "value": 309.2,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=224 ( {\"precompile\":\"sha256\",\"case\":\"size=224\"} )",
+            "value": 372.7,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=240 ( {\"precompile\":\"sha256\",\"case\":\"size=240\"} )",
+            "value": 292,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.sha256.size=256 ( {\"precompile\":\"sha256\",\"case\":\"size=256\"} )",
+            "value": 334.2,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
+          },
+          {
+            "name": "evmtool.EcRecover.ecrecover ( {\"precompile\":\"EcRecover\",\"case\":\"ecrecover\"} )",
+            "value": 676270.2,
+            "unit": "ns/op",
+            "extra": "iterations: 0\nforks: 1\nthreads: 1"
           }
         ]
       }
