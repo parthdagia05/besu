@@ -1,0 +1,95 @@
+name: ADDMOD pow2 benchmark (A/B)
+
+# Throwaway workflow for PR #10623: measures UInt256.addMod with the power-of-two
+# modulus fast path OFF (baseline) vs ON (patched) on ubuntu-latest / Temurin 21,
+# matching the methodology from the DIV PR (#10588). Emits a markdown table to the
+# job summary. NOT intended to be merged into the PR branch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      cases:
+        description: Comma-separated JMH caseName params
+        default: ADDMOD_256_256_POW2_1_63,ADDMOD_256_256_POW2_64_127,ADDMOD_256_256_POW2_128_191,ADDMOD_256_256_POW2_192_255,ADDMOD_256_256_POW2_1_255,ADDMOD_256_256_256,ADDMOD_256_256_192,ADDMOD_128_128_128,ADDMOD_RANDOM_RANDOM_RANDOM
+      fork:
+        description: JMH forks
+        default: "3"
+      warmup:
+        description: Warmup iterations (x1s)
+        default: "5"
+      iter:
+        description: Measurement iterations (x1s)
+        default: "5"
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Baseline run (pow2 fast path OFF)
+        run: |
+          ./gradlew :ethereum:core:jmh -Pincludes=AddMod \
+            -Pcases="${{ github.event.inputs.cases }}" -Ppow2=false \
+            -PjmhFork=${{ github.event.inputs.fork }} \
+            -PjmhWarmup=${{ github.event.inputs.warmup }} \
+            -PjmhIter=${{ github.event.inputs.iter }}
+          cp ethereum/core/build/results/jmh/results.txt before.txt
+
+      - name: Patched run (pow2 fast path ON)
+        run: |
+          ./gradlew :ethereum:core:jmh -Pincludes=AddMod \
+            -Pcases="${{ github.event.inputs.cases }}" -Ppow2=true \
+            -PjmhFork=${{ github.event.inputs.fork }} \
+            -PjmhWarmup=${{ github.event.inputs.warmup }} \
+            -PjmhIter=${{ github.event.inputs.iter }}
+          cp ethereum/core/build/results/jmh/results.txt after.txt
+
+      - name: Build comparison table
+        run: |
+          python3 - before.txt after.txt <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import sys
+
+          def parse(path):
+              rows = {}
+              for line in open(path):
+                  if "executeOperation" not in line:
+                      continue
+                  t = line.split()
+                  # ... caseName Mode Cnt Score ± Error Units
+                  units, error, _pm, score, _cnt, _mode, case = (
+                      t[-1], t[-2], t[-3], t[-4], t[-5], t[-6], t[-7])
+                  rows[case] = (float(score), float(error))
+              return rows
+
+          before, after = parse(sys.argv[1]), parse(sys.argv[2])
+          print("### ADDMOD power-of-two fast path — baseline vs patched")
+          print()
+          print("JMH `fork=3`, 5x1s warmup + 5x1s measurement, ubuntu-latest, Temurin 21. "
+                "Baseline = pow2 fast path disabled at runtime; patched = enabled. avgt, ns/op.")
+          print()
+          print("| Case | Baseline (ns/op) | Patched (ns/op) | Delta |")
+          print("|---|---|---|---|")
+          for case in before:
+              b, be = before[case]
+              a, ae = after.get(case, (float("nan"), 0))
+              delta = (b - a) / b * 100 if b else 0
+              print(f"| {case} | {b:.2f} ± {be:.2f} | {a:.2f} ± {ae:.2f} | {delta:+.1f}% |")
+          PY
+
+      - name: Upload raw JMH results
+        uses: actions/upload-artifact@v4
+        with:
+          name: addmod-jmh-results
+          path: |
+            before.txt
+            after.txt

@@ -792,7 +792,11 @@ subprojects {
 
     jmh {
       jmhVersion = '1.37'
-      fork = 3
+      fork = ((project.findProperty('jmhFork') ?: '3') as String) as Integer
+      warmupIterations = ((project.findProperty('jmhWarmup') ?: '5') as String) as Integer
+      iterations = ((project.findProperty('jmhIter') ?: '5') as String) as Integer
+      timeOnIteration = '1s'
+      warmup = '1s'
       var inc = _strListCmdArg('includes', [''])
       includes = inc.size() > 1 ? [".*(${inc.join('|')}).*"] : inc
       excludes = _strListCmdArg('excludes', [])
@@ -806,7 +810,8 @@ subprojects {
       var asyncProfilerOptions = _strCmdArg('asyncProfilerOptions', 'output=flamegraph')
       zip64.set(true)
       jvmArgs = [
-        '-XX:+EnableDynamicAgentLoading'
+        '-XX:+EnableDynamicAgentLoading',
+        '-Dbesu.pow2AddMod=' + ((project.findProperty('pow2') ?: 'true') as String)
       ]
       if (asyncProfiler != null) {
         profilers = [

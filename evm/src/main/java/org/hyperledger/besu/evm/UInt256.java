@@ -600,6 +600,9 @@ public record UInt256(long u3, long u2, long u1, long u0) {
     return q;
   }
 
+  private static final boolean POW2_FAST =
+      Boolean.parseBoolean(System.getProperty("besu.pow2AddMod", "true"));
+
   /**
    * Modular addition.
    *
@@ -612,24 +615,28 @@ public record UInt256(long u3, long u2, long u1, long u0) {
     if (other.isZero()) return this.mod(modulus);
     if (modulus.isZeroOrOne()) return ZERO;
     if (modulus.u3 != 0) {
-      if ((modulus.u3 & (modulus.u3 - 1)) == 0 && (modulus.u2 | modulus.u1 | modulus.u0) == 0) {
+      if (POW2_FAST
+          && (modulus.u3 & (modulus.u3 - 1)) == 0
+          && (modulus.u2 | modulus.u1 | modulus.u0) == 0) {
         return add(other).maskLow(192 + Long.numberOfTrailingZeros(modulus.u3));
       }
       return modulus.sum(this, other);
     }
     if (modulus.u2 != 0) {
-      if ((modulus.u2 & (modulus.u2 - 1)) == 0 && (modulus.u1 | modulus.u0) == 0) {
+      if (POW2_FAST
+          && (modulus.u2 & (modulus.u2 - 1)) == 0
+          && (modulus.u1 | modulus.u0) == 0) {
         return add(other).maskLow(128 + Long.numberOfTrailingZeros(modulus.u2));
       }
       return modulus.asUInt192().sum(this, other);
     }
     if (modulus.u1 != 0) {
-      if ((modulus.u1 & (modulus.u1 - 1)) == 0 && modulus.u0 == 0) {
+      if (POW2_FAST && (modulus.u1 & (modulus.u1 - 1)) == 0 && modulus.u0 == 0) {
         return add(other).maskLow(64 + Long.numberOfTrailingZeros(modulus.u1));
       }
       return modulus.asUInt128().sum(this, other);
     }
-    if ((modulus.u0 & (modulus.u0 - 1)) == 0) {
+    if (POW2_FAST && (modulus.u0 & (modulus.u0 - 1)) == 0) {
       return add(other).maskLow(Long.numberOfTrailingZeros(modulus.u0));
     }
     return modulus.asUInt64().sum(this, other);
