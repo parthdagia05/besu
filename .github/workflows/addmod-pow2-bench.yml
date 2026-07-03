@@ -6,24 +6,27 @@ name: ADDMOD pow2 benchmark (A/B)
 # job summary. NOT intended to be merged into the PR branch.
 
 on:
+  push:
+    branches: [bench/addmod-pow2-ci]
   workflow_dispatch:
     inputs:
       cases:
         description: Comma-separated JMH caseName params
-        default: ADDMOD_256_256_POW2_1_63,ADDMOD_256_256_POW2_64_127,ADDMOD_256_256_POW2_128_191,ADDMOD_256_256_POW2_192_255,ADDMOD_256_256_POW2_1_255,ADDMOD_256_256_256,ADDMOD_256_256_192,ADDMOD_128_128_128,ADDMOD_RANDOM_RANDOM_RANDOM
       fork:
         description: JMH forks
-        default: "3"
       warmup:
         description: Warmup iterations (x1s)
-        default: "5"
       iter:
         description: Measurement iterations (x1s)
-        default: "5"
 
 jobs:
   bench:
     runs-on: ubuntu-latest
+    env:
+      CASES: ${{ github.event.inputs.cases || 'ADDMOD_256_256_POW2_1_63,ADDMOD_256_256_POW2_64_127,ADDMOD_256_256_POW2_128_191,ADDMOD_256_256_POW2_192_255,ADDMOD_256_256_POW2_1_255,ADDMOD_256_256_256,ADDMOD_256_256_192,ADDMOD_128_128_128,ADDMOD_RANDOM_RANDOM_RANDOM' }}
+      FORK: ${{ github.event.inputs.fork || '3' }}
+      WARMUP: ${{ github.event.inputs.warmup || '5' }}
+      ITER: ${{ github.event.inputs.iter || '5' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,19 +42,15 @@ jobs:
       - name: Baseline run (pow2 fast path OFF)
         run: |
           ./gradlew :ethereum:core:jmh -Pincludes=AddMod \
-            -Pcases="${{ github.event.inputs.cases }}" -Ppow2=false \
-            -PjmhFork=${{ github.event.inputs.fork }} \
-            -PjmhWarmup=${{ github.event.inputs.warmup }} \
-            -PjmhIter=${{ github.event.inputs.iter }}
+            -Pcases="$CASES" -Ppow2=false \
+            -PjmhFork="$FORK" -PjmhWarmup="$WARMUP" -PjmhIter="$ITER"
           cp ethereum/core/build/results/jmh/results.txt before.txt
 
       - name: Patched run (pow2 fast path ON)
         run: |
           ./gradlew :ethereum:core:jmh -Pincludes=AddMod \
-            -Pcases="${{ github.event.inputs.cases }}" -Ppow2=true \
-            -PjmhFork=${{ github.event.inputs.fork }} \
-            -PjmhWarmup=${{ github.event.inputs.warmup }} \
-            -PjmhIter=${{ github.event.inputs.iter }}
+            -Pcases="$CASES" -Ppow2=true \
+            -PjmhFork="$FORK" -PjmhWarmup="$WARMUP" -PjmhIter="$ITER"
           cp ethereum/core/build/results/jmh/results.txt after.txt
 
       - name: Build comparison table
@@ -65,14 +64,14 @@ jobs:
                   if "executeOperation" not in line:
                       continue
                   t = line.split()
-                  # ... caseName Mode Cnt Score ± Error Units
+                  # ... caseName Mode Cnt Score +/- Error Units
                   units, error, _pm, score, _cnt, _mode, case = (
                       t[-1], t[-2], t[-3], t[-4], t[-5], t[-6], t[-7])
                   rows[case] = (float(score), float(error))
               return rows
 
           before, after = parse(sys.argv[1]), parse(sys.argv[2])
-          print("### ADDMOD power-of-two fast path — baseline vs patched")
+          print("### ADDMOD power-of-two fast path -- baseline vs patched")
           print()
           print("JMH `fork=3`, 5x1s warmup + 5x1s measurement, ubuntu-latest, Temurin 21. "
                 "Baseline = pow2 fast path disabled at runtime; patched = enabled. avgt, ns/op.")
@@ -83,7 +82,7 @@ jobs:
               b, be = before[case]
               a, ae = after.get(case, (float("nan"), 0))
               delta = (b - a) / b * 100 if b else 0
-              print(f"| {case} | {b:.2f} ± {be:.2f} | {a:.2f} ± {ae:.2f} | {delta:+.1f}% |")
+              print(f"| {case} | {b:.2f} +/- {be:.2f} | {a:.2f} +/- {ae:.2f} | {delta:+.1f}% |")
           PY
 
       - name: Upload raw JMH results
